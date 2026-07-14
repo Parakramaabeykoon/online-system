@@ -35,7 +35,7 @@ export default function LoginPage() {
   return (
     <div className="relative min-h-screen bg-[url('/bg.jpg')] bg-cover bg-center">
       {/* Elegant Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[--color-secondary]/85 via-black/45 to-[--color-secondary]/85"></div>
+      <div className="absolute inset-0 bg-linear-to-r from-[--color-secondary]/85 via-black/45 to-[--color-secondary]/85"></div>
 
       <div className="relative z-10 flex min-h-screen">
         {/* Left Section */}
