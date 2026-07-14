@@ -6,10 +6,15 @@ import { setupPrimary } from "node:cluster";
 import userRouter from "./Router/userRouter.js";
 import productRouter from "./Router/productRouter.js";
 import jwt from "jsonwebtoken";
+import cors from "cors";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 
 
 const app = express()
+app.use(cors())
 
 app.use(express.json());
 
@@ -19,7 +24,7 @@ app.use(
 
     if (token != null) {
       token = token.replace("Bearer ", "");
-      jwt.verify(token, "jwt-secret",
+      jwt.verify(token, process.env.JWT_SECRET,
         (err, decoded) => {
           if (decoded == null) {
             res.json({
@@ -37,7 +42,7 @@ app.use(
   })
 
 
-const connectionString = "mongodb+srv://admin:1234@cluster0.qvnn6qg.mongodb.net/?appName=Cluster0"
+const connectionString = process.env.MONGO_URI
 
 mongoose.connect(connectionString).then(
   () => {
@@ -47,8 +52,8 @@ mongoose.connect(connectionString).then(
   console.log("Database Connection Failed")
 
 })
-app.use("/user", userRouter)
-app.use("/products", productRouter)
+app.use("/api/users", userRouter)
+app.use("/api/products", productRouter)
 
 app.listen(5000,
   () => {
