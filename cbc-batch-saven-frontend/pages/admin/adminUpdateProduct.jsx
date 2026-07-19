@@ -1,22 +1,24 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router-dom";
 import mediaUpload from "../utils/mediaUpload";
 import toast from "react-hot-toast";
 import axios from "axios";
 
-export default function AddProductPage() {
-  const [productId, setProductId] = useState("");
-  const [name, setName] = useState("");
-  const [altName, setAltName] = useState("");
-  const [description, setDescription] = useState("");
+export default function UpdateProductPage() {
+  const location = useLocation();
+  //console.log(location.state);
+  const [productId, setProductId] = useState(location.state.productID);
+  const [name, setName] = useState(location.state.name);
+  const [altName, setAltName] = useState(location.state.altName.join(","));
+  const [description, setDescription] = useState(location.state.description);
   const [images, setImages] = useState([]);
-  const [price, setPrice] = useState(0);
-  const [labalPrice, setLabalPrice] = useState(0);
-  const [category, setCategory] = useState("cream");
-  const [stoke, setStoke] = useState(0);
+  const [price, setPrice] = useState(location.state.price);
+  const [labalPrice, setLabalPrice] = useState(location.state.labalPrice);
+  const [category, setCategory] = useState(location.state.category);
+  const [stoke, setStoke] = useState(location.state.stoke);
   const navigate = useNavigate();
 
-  async function addProduct() {
+  async function updateProduct() {
     const token = localStorage.getItem("token");
     if (token == null) {
       navigate("/login");
@@ -29,28 +31,29 @@ export default function AddProductPage() {
     }
 
     try {
-      const urls = await Promise.all(uploadPromises);
+      let urls = await Promise.all(uploadPromises);
+      if (urls.length == 0) {
+        urls = location.state.images;
+      }
 
-      // 🟢 ERROR FIX: altName හිස්ව තිබුණොත් crash වීම වැළැක්වීමට සහ කොමා (,) මඟින් වෙන් කිරීමට (e.g. Face Serum, Glow Toner)
       const AlternativeName = altName
         ? altName.split(",").map((item) => item.trim())
         : [];
 
-      // backend schema එකට ගැලපෙන ලෙස keys වෙනස් කරන ලදි
       const product = {
         productID: productId,
         name: name,
         altName: AlternativeName,
-        discription: description, // Backend schema: discription
-        Image: urls, // Backend schema: Image (Capital I)
+        discription: description,
+        Image: urls,
         price: price,
-        labalPrice: labalPrice, // Backend schema: labalPrice
+        labalPrice: labalPrice,
         category: category,
-        stock: stoke, // Backend schema: stock (Frontend එකේ stoke අගය මෙයට map කරන ලදි)
+        stock: stoke,
       };
 
-      await axios.post(
-        import.meta.env.VITE_API_URL + "/api/products",
+      await axios.put(
+        import.meta.env.VITE_API_URL + "/api/products/" + productId,
         product,
         {
           headers: {
@@ -58,11 +61,9 @@ export default function AddProductPage() {
           },
         },
       );
-
       console.log(urls);
       toast.success("Product added Successfully");
 
-      // 🟢 ROUTING FIX: Cancel button එකේ තියෙන path එකටම සමානව /admin/products ලෙස නිවැරදි කරන ලදි
       navigate("/admin/products");
     } catch (error) {
       console.error(error);
@@ -80,7 +81,7 @@ export default function AddProductPage() {
           </p>
 
           <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-            Add a new product
+            Update product
           </h1>
 
           <p className="mt-2 text-sm text-gray-500">
@@ -100,6 +101,7 @@ export default function AddProductPage() {
                 </label>
 
                 <input
+                  disabled
                   value={productId}
                   onChange={(e) => {
                     setProductId(e.target.value);
@@ -270,7 +272,7 @@ export default function AddProductPage() {
                 <button
                   type="button"
                   onClick={() => {
-                    navigate("/admin/products");
+                    navigate("/admin/products", {});
                   }}
                   className="rounded-full bg-red-200 px-3 h-[40px] w-[100px] py-1 text-md flex justify-center items-center font-medium text-secondary ring-accent/3 hover:border-accent hover:border-[2px]"
                 >
@@ -278,7 +280,7 @@ export default function AddProductPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={addProduct}
+                  onClick={updateProduct}
                   className="rounded-full bg-accent/15 px-3 h-[40px] w-[100px] py-1 text-md flex justify-center items-center font-medium text-secondary ring-accent/30 hover:border-accent hover:border-[2px]"
                 >
                   Submit

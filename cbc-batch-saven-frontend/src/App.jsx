@@ -7,6 +7,7 @@ import TestPage from "../pages/test";
 import LoginPage from "../pages/loginPage";
 import { RouterProvider } from "react-router";
 import { Toaster } from "react-hot-toast";
+import UpdateProductPage from "../pages/admin/adminUpdateProduct";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/admin/*" element={<AdminPage />} />
           <Route path="/test" element={<TestPage />} />
+          <Route path="/admin/update-product" element={<UpdateProductPage />} />
         </Routes>
       </div>
     </BrowserRouter>

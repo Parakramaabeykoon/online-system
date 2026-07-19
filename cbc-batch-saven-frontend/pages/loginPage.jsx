@@ -18,7 +18,7 @@ export default function LoginPage() {
         },
       );
       localStorage.setItem("token", response.data.token);
-      toast.success("Login Successful");
+      toast.success("Login Successfull");
 
       const user = response.data.user;
       if (user.role == "admin") {

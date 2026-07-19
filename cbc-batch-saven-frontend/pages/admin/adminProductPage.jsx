@@ -1,85 +1,23 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { FaRegCreditCard } from "react-icons/fa";
+import { FaRegCreditCard, FaRegEdit } from "react-icons/fa";
 import { FaCirclePlus, FaRegTrashCan } from "react-icons/fa6";
-import { Link } from "react-router";
-
-const sampleData = [
-  {
-    productID: "P001",
-    name: "Vitamin C Brightening Serum",
-    altName: ["Vitamin C Serum", "Brightening Serum", "Face Serum"],
-    discription:
-      "A lightweight vitamin C serum that helps brighten the skin and reduce the appearance of dark spots.",
-    Image: [
-      "/products/vitamin-c-serum-1.jpg",
-      "/products/vitamin-c-serum-2.jpg",
-    ],
-    price: 4500,
-    labalPrice: 5000,
-    category: "Skincare",
-  },
-
-  {
-    productID: "P002",
-    name: "Hydrating Face Moisturizer",
-    altName: ["Face Moisturizer", "Hydrating Cream", "Moisturizing Cream"],
-    discription:
-      "A gentle hydrating moisturizer that keeps the skin soft, smooth, and moisturized throughout the day.",
-    Image: [
-      "/products/hydrating-moisturizer-1.jpg",
-      "/products/hydrating-moisturizer-2.jpg",
-    ],
-    price: 3200,
-    labalPrice: 3800,
-    category: "Skincare",
-  },
-
-  {
-    productID: "P003",
-    name: "Matte Liquid Lipstick",
-    altName: ["Liquid Lipstick", "Matte Lipstick", "Long Lasting Lipstick"],
-    discription:
-      "A long-lasting matte liquid lipstick with a smooth texture and rich color payoff.",
-    Image: ["/products/matte-lipstick-1.jpg", "/products/matte-lipstick-2.jpg"],
-    price: 2500,
-    labalPrice: 3000,
-    category: "Makeup",
-  },
-
-  {
-    productID: "P004",
-    name: "Aloe Vera Face Wash",
-    altName: ["Aloe Face Wash", "Facial Cleanser", "Aloe Cleanser"],
-    discription:
-      "A refreshing aloe vera face wash that gently cleanses the skin and removes dirt and excess oil.",
-    Image: ["/products/aloe-face-wash-1.jpg", "/products/aloe-face-wash-2.jpg"],
-    price: 1800,
-    labalPrice: 2200,
-    category: "Skincare",
-  },
-
-  {
-    productID: "P005",
-    name: "Rose Glow Facial Toner",
-    altName: ["Rose Toner", "Face Toner", "Glow Toner"],
-    discription:
-      "A refreshing rose facial toner that helps balance the skin and gives a natural healthy glow.",
-    Image: ["/products/rose-toner-1.jpg", "/products/rose-toner-2.jpg"],
-    price: 2100,
-    labalPrice: 2600,
-    category: "Skincare",
-  },
-];
+import { Link, useNavigate } from "react-router";
 
 export default function AdminProductPage() {
-  const [products, setProducts] = useState(sampleData);
+  const [products, setProducts] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios
       .get(import.meta.env.VITE_API_URL + "/api/products")
       .then((Response) => {
         console.log(Response.data);
+        // 🟢 ERROR FIX: Backend එකෙන් එන දත්ත ටික products state එකට සෙට් කළා
+        setProducts(Response.data);
+      })
+      .catch((error) => {
+        console.error(error);
       });
   }, []);
 
@@ -87,7 +25,7 @@ export default function AdminProductPage() {
     <div className="w-full h-full p-4 sm:p-6 bg-transparent">
       <Link
         to="/admin/add-product"
-        className="flex right-[50px] bottem-[50px] text-5xl hover:text-accent "
+        className="flex right-[50px] bottom-[50px] text-5xl hover:text-accent " /* 🟢 ERROR FIX: bottem -> bottom ලෙස නිවැරදි කළා */
       >
         <FaCirclePlus />
       </Link>
@@ -148,7 +86,9 @@ export default function AdminProductPage() {
                     <td className="px-6 py-4">
                       <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl border border-gray-100 bg-gray-50 shadow-sm">
                         <img
-                          src={item.Image[0]}
+                          src={
+                            item.Image && item.Image[0] ? item.Image[0] : ""
+                          } /* 🟢 SAFTEY CHECK: Image array එක හිස්ව ආවොත් crash නොවීමට */
                           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                       </div>
@@ -166,13 +106,14 @@ export default function AdminProductPage() {
 
                     <td className="px-6 py-4">
                       <span className="font-semibold text-gray-800">
-                        Rs. {item.price.toLocaleString()}
+                        Rs. {item.price ? item.price.toLocaleString() : 0}
                       </span>
                     </td>
 
                     <td className="px-6 py-4">
                       <span className="text-gray-500 line-through">
-                        Rs. {item.labalPrice.toLocaleString()}
+                        Rs.{" "}
+                        {item.labalPrice ? item.labalPrice.toLocaleString() : 0}
                       </span>
                     </td>
 
@@ -193,9 +134,14 @@ export default function AdminProductPage() {
 
                         <button
                           type="button"
-                          className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 transition-all duration-200 hover:bg-accent/10 hover:text-accent active:scale-95"
+                          className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 transition-all duration-200 hover:bg-accent/10 hover:text-accent active:scale-95 "
+                          onClick={() => {
+                            navigate("/admin/update-product", {
+                              state: item,
+                            });
+                          }}
                         >
-                          <FaRegCreditCard size={16} />
+                          <FaRegEdit size={16} />
                         </button>
                       </div>
                     </td>
