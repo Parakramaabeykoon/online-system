@@ -31,22 +31,20 @@ export default function AddProductPage() {
     try {
       const urls = await Promise.all(uploadPromises);
 
-      // 🟢 ERROR FIX: altName හිස්ව තිබුණොත් crash වීම වැළැක්වීමට සහ කොමා (,) මඟින් වෙන් කිරීමට (e.g. Face Serum, Glow Toner)
       const AlternativeName = altName
         ? altName.split(",").map((item) => item.trim())
         : [];
 
-      // backend schema එකට ගැලපෙන ලෙස keys වෙනස් කරන ලදි
       const product = {
         productID: productId,
         name: name,
         altName: AlternativeName,
-        discription: description, // Backend schema: discription
-        Image: urls, // Backend schema: Image (Capital I)
+        discription: description,
+        Image: urls,
         price: price,
-        labalPrice: labalPrice, // Backend schema: labalPrice
+        labalPrice: labalPrice,
         category: category,
-        stock: stoke, // Backend schema: stock (Frontend එකේ stoke අගය මෙයට map කරන ලදි)
+        stock: stoke,
       };
 
       await axios.post(
@@ -62,7 +60,6 @@ export default function AddProductPage() {
       console.log(urls);
       toast.success("Product added Successfully");
 
-      // 🟢 ROUTING FIX: Cancel button එකේ තියෙන path එකටම සමානව /admin/products ලෙස නිවැරදි කරන ලදි
       navigate("/admin/products");
     } catch (error) {
       console.error(error);

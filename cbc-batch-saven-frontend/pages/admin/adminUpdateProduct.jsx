@@ -6,7 +6,7 @@ import axios from "axios";
 
 export default function UpdateProductPage() {
   const location = useLocation();
-  //console.log(location.state);
+
   const [productId, setProductId] = useState(location.state.productID);
   const [name, setName] = useState(location.state.name);
   const [altName, setAltName] = useState(location.state.altName.join(","));

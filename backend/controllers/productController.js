@@ -14,7 +14,7 @@ export async function createProduct(req, res) {
   try {
     const productData = req.body;
 
-    // 💡 req.body එක Array එකක්ද (නිෂ්පාදන කිහිපයක්ද) කියා පරීක්ෂා කිරීම
+
     if (Array.isArray(productData)) {
       // නිෂ්පාදන කිහිපයක්ම එකවර සේව් කිරීම (Bulk Insert)
       const savedProducts = await product.insertMany(productData);
@@ -113,10 +113,10 @@ export async function getProductid(req, res) {
   try {
     const productID = req.params.productID;
 
-    // 💡 Variable නම 'foundProduct' ලෙස වෙනස් කරන ලදි
+
     const foundProduct = await product.findOne({ productID: productID });
 
-    // 💡 'product == null' වෙනුවට 'foundProduct' පරීක්ෂා කිරීම
+
     if (foundProduct == null) {
       res.status(404).json({
         message: "Product not found"
@@ -127,7 +127,7 @@ export async function getProductid(req, res) {
   } catch (err) {
     console.error(err);
     res.status(500).json({
-      message: "Failed to retrieve product by ID", // 💡 spelling නිවැරදි කරන ලදි
+      message: "Failed to retrieve product by ID", // 💡 
       error: err.message
     });
   }

@@ -1,13 +1,34 @@
-export default function ProductCard() {
+export default function ProductCard(props) {
+  const product = props.product;
   return (
-    <div className="productCard">
-      <h1>Apple mackbook</h1>
-      <p>price: $1000</p>
+    <div className="w-[300px] h-[400px] shadow-2xl m-3 flex flex-col p-[10px]">
       <img
-        className="productCrad"
-        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHJ7gOAGLol4RQ5z3eEFRqVPaDYKczT9QIrkLIJ7ZZjQ&s=10"
+        className="w-full h-[250px] object-cover"
+        src={product?.Image?.[0]}
       />
-      <button>Add to Card</button>
+      <h1 className="text-xl font-bold text-secondary">{product?.name}</h1>
+
+      {product?.lableledPrice?.price || product?.labalPrice ? (
+        <div className="flex gap-3 items-center">
+          <p className="text-lg text-secondary font-semibold line-through">
+            LKR
+            {product?.lableledPrice?.toFixed?.(2) ||
+              product?.labalPrice?.toFixed?.(2)}
+          </p>
+          <p className="text-lg text-accent font-semibold">
+            LKR{product?.price?.toFixed(2)}
+          </p>
+        </div>
+      ) : (
+        <p className="text-lg text-accent font-semibold">
+          LKR{product?.price?.toFixed(2)}
+        </p>
+      )}
+      <p className="text-sm text-secondary/70">{product.productID}</p>
+      <p className="text-sm text-secondary/70">{product.category}</p>
+      <button className="w-full h-[30px] mt-[5px] border border-accent text-accent  hover:bg-accent hover:text-white">
+        View Product
+      </button>
     </div>
   );
 }
