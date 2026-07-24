@@ -7,6 +7,7 @@ import ProductCard from "../../src/components/productCard";
 export function ProductPage() {
   const [products, setProducts] = useState([]);
   const [isLoading, setisLoading] = useState(true);
+
   useEffect(() => {
     if (isLoading) {
       axios
@@ -29,8 +30,12 @@ export function ProductPage() {
         <Loader />
       ) : (
         <div className="w-full h-full flex flex-wrap">
-          {products.map((item) => {
-            return <ProductCard key={item.productId} product={item} />;
+          {products.map((item, index) => {
+            {
+              /* item._id, item.id හෝ item.productId අතුරින් ඇති එක ගනී. නැත්නම් index එක ගනී */
+            }
+            const key = item._id || item.id || item.productId || index;
+            return <ProductCard key={key} product={item} />;
           })}
         </div>
       )}
